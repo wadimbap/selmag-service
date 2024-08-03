@@ -1,10 +1,10 @@
 package com.wadimbap.manager.controller;
 
-import com.wadimbap.manager.client.BadRequestException;
 import com.wadimbap.manager.client.ProductsRestClient;
 import com.wadimbap.manager.controller.payload.NewProductPayload;
 import com.wadimbap.manager.entity.Product;
 import lombok.RequiredArgsConstructor;
+import com.wadimbap.manager.client.BadRequestException;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,7 +20,7 @@ public class ProductsController {
 
     @GetMapping("list")
     public String getProductsList(Model model) {
-        model.addAttribute("products", this.productsRestClient.findAllProducts());
+        model.addAttribute("products", productsRestClient.findAllProducts());
         return "catalogue/products/list";
     }
 
@@ -33,7 +33,7 @@ public class ProductsController {
     public String createProduct(NewProductPayload payload,
                                 Model model) {
         try {
-            Product product = this.productsRestClient.createProduct(payload.title(), payload.details());
+            Product product = productsRestClient.createProduct(payload.title(), payload.details());
             return "redirect:/catalogue/products/%d".formatted(product.id());
         } catch (BadRequestException exception) {
             model.addAttribute("payload", payload);

@@ -17,7 +17,7 @@ import java.util.Optional;
 @RequiredArgsConstructor
 public class RestClientProductsRestClient implements ProductsRestClient {
 
-    private static final ParameterizedTypeReference<List<Product>> PRODUCTS_TYPE_REFERENCE =
+    private static final ParameterizedTypeReference<List<Product>> PRODUCT_TYPE_REFERENCE =
             new ParameterizedTypeReference<>() {
             };
 
@@ -25,18 +25,16 @@ public class RestClientProductsRestClient implements ProductsRestClient {
 
     @Override
     public List<Product> findAllProducts() {
-        return this.restClient
-                .get()
+        return restClient.get()
                 .uri("/catalogue-api/products")
                 .retrieve()
-                .body(PRODUCTS_TYPE_REFERENCE);
+                .body(PRODUCT_TYPE_REFERENCE);
     }
 
     @Override
     public Product createProduct(String title, String details) {
         try {
-            return this.restClient
-                    .post()
+            return restClient.post()
                     .uri("/catalogue-api/products")
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(new NewProductPayload(title, details))
@@ -51,7 +49,7 @@ public class RestClientProductsRestClient implements ProductsRestClient {
     @Override
     public Optional<Product> findProduct(int productId) {
         try {
-            return Optional.ofNullable(this.restClient.get()
+            return Optional.ofNullable(restClient.get()
                     .uri("/catalogue-api/products/{productId}", productId)
                     .retrieve()
                     .body(Product.class));
@@ -63,15 +61,14 @@ public class RestClientProductsRestClient implements ProductsRestClient {
     @Override
     public void updateProduct(int productId, String title, String details) {
         try {
-            this.restClient
-                    .patch()
+            restClient.patch()
                     .uri("/catalogue-api/products/{productId}", productId)
                     .contentType(MediaType.APPLICATION_JSON)
                     .body(new UpdateProductPayload(title, details))
                     .retrieve()
                     .toBodilessEntity();
-        } catch (HttpClientErrorException.BadRequest exception) {
-            ProblemDetail problemDetail = exception.getResponseBodyAs(ProblemDetail.class);
+        } catch (HttpClientErrorException.BadRequest e) {
+            ProblemDetail problemDetail = e.getResponseBodyAs(ProblemDetail.class);
             throw new BadRequestException((List<String>) problemDetail.getProperties().get("errors"));
         }
     }
@@ -79,8 +76,7 @@ public class RestClientProductsRestClient implements ProductsRestClient {
     @Override
     public void deleteProduct(int productId) {
         try {
-            this.restClient
-                    .delete()
+            restClient.delete()
                     .uri("/catalogue-api/products/{productId}", productId)
                     .retrieve()
                     .toBodilessEntity();

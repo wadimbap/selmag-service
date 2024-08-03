@@ -11,9 +11,10 @@ public class ClientBeans {
 
     @Bean
     public RestClientProductsRestClient productsRestClient(
-            @Value("${selmag.service.catalogue.uri:http://localhost:8081}") String catalogueBaseUri) {
+            @Value("${selmag.services.catalogue.uri:http://localhost:8081}") String catalogueBaseUri) {
         return new RestClientProductsRestClient(RestClient.builder()
                 .baseUrl(catalogueBaseUri)
-                .build());
+                .build()
+        );
     }
 }
